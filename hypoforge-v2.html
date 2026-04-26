@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HypoForge v2 — AI Scientist</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --bg2: #eceae3;
+  --surface: #ffffff;
+  --surface2: #f8f7f3;
+  --ink: #1a1a18;
+  --ink2: #3d3d38;
+  --muted: #8a8a80;
+  --border: #dddbd2;
+  --accent: #1b4f3a;
+  --accent-lt: #e8f2ed;
+  --accent2: #c8410b;
+  --accent2-lt: #fdf0eb;
+  --accent3: #2d5fa8;
+  --accent3-lt: #edf2fb;
+  --yellow: #b8860b;
+  --yellow-lt: #fdf8e1;
+  --red: #b91c1c;
+  --red-lt: #fef2f2;
+  --green: #166534;
+  --green-lt: #f0fdf4;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--accent);
+  color: #fff;
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+}
+.header-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.nav-tabs {
+  display: flex; gap: 0;
+}
+.nav-tab {
+  padding: 0 20px;
+  height: 64px;
+  display: flex; align-items: center;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: rgba(255,255,255,0.9); }
+.nav-tab.active { color: #fff; border-bottom-color: #4ade80; }
+
+/* ── MAIN LAYOUT ── */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+/* ── PAGE VIEWS ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── INPUT PAGE ── */
+.page-header {
+  margin-bottom: 32px;
+}
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.page-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink2);
+  margin-bottom: 6px;
+}
+.hint { font-weight: 400; color: var(--muted); font-size: 0.75rem; margin-left: 6px; }
+
+input[type="text"], input[type="password"], textarea, select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.88rem;
+  padding: 11px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 16px;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(27,79,58,0.1);
+  background: #fff;
+}
+textarea { resize: vertical; min-height: 110px; margin-bottom: 4px; }
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%238a8a80' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; cursor: pointer; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* Hypothesis helper */
+.hypo-helper {
+  background: var(--accent-lt);
+  border: 1px solid rgba(27,79,58,0.15);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 0.78rem;
+  color: var(--accent);
+  line-height: 1.6;
+}
+.hypo-helper strong { font-weight: 600; }
+.hypo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.hypo-chip {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+.hypo-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+
+.run-btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(27,79,58,0.3);
+}
+.run-btn:hover:not(:disabled) { background: #163d2d; box-shadow: 0 4px 16px rgba(27,79,58,0.4); transform: translateY(-1px); }
+.run-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* ── LOADING ── */
+.loading-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(245,244,240,0.94);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  backdrop-filter: blur(4px);
+}
+.loading-overlay.active { display: flex; }
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.loading-steps { list-style: none; width: 340px; }
+.lstep {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  transition: color 0.3s;
+}
+.lstep.active { color: var(--accent); font-weight: 600; }
+.lstep.done { color: var(--green); }
+.lstep-icon { width: 18px; text-align: center; }
+
+/* ── RESULTS PAGE ── */
+.results-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Sidebar nav */
+.sidebar {
+  position: sticky; top: 80px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.sidebar-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+.sidebar-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.sidebar-link:hover { background: var(--surface2); color: var(--accent); }
+.sidebar-link.active { background: var(--accent-lt); color: var(--accent); font-weight: 600; }
+.sidebar-link .sl-icon { font-size: 1rem; width: 20px; text-align: center; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 8px 0; }
+
+/* QC Badge */
+.qc-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+.qc-badge.novel { background: var(--green-lt); color: var(--green); border: 1px solid rgba(22,101,52,0.2); }
+.qc-badge.similar { background: var(--yellow-lt); color: var(--yellow); border: 1px solid rgba(184,134,11,0.2); }
+.qc-badge.exact { background: var(--red-lt); color: var(--red); border: 1px solid rgba(185,28,28,0.2); }
+
+/* Result cards */
+.rcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  scroll-margin-top: 84px;
+}
+.rcard-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+.rcard-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex; align-items: center; gap: 8px;
+}
+.rcard-icon { font-size: 1.1rem; }
+
+/* Novelty signal */
+.novelty-bar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.novelty-bar.novel { background: var(--green-lt); border: 1px solid rgba(22,101,52,0.15); }
+.novelty-bar.similar { background: var(--yellow-lt); border: 1px solid rgba(184,134,11,0.15); }
+.novelty-bar.exact { background: var(--red-lt); border: 1px solid rgba(185,28,28,0.15); }
+.novelty-signal {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.novelty-signal.novel { color: var(--green); }
+.novelty-signal.similar { color: var(--yellow); }
+.novelty-signal.exact { color: var(--red); }
+.novelty-desc { font-size: 0.8rem; color: var(--ink2); line-height: 1.5; }
+
+/* Hypothesis */
+.var-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.var-block { background: var(--surface2); border-radius: 8px; padding: 14px; border: 1px solid var(--border); }
+.var-label { font-size: 0.62rem; font-family: 'IBM Plex Mono', monospace; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.var-value { font-size: 0.82rem; color: var(--ink); line-height: 1.5; }
+.tag { display: inline-block; font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; background: var(--accent-lt); color: var(--accent); border: 1px solid rgba(27,79,58,0.15); margin: 2px; font-family: 'IBM Plex Mono', monospace; }
+
+/* Literature */
+.paper-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.paper-item:last-child { border-bottom: none; }
+.paper-title { font-size: 0.88rem; font-weight: 600; color: var(--ink); margin-bottom: 3px; line-height: 1.4; }
+.paper-meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; }
+.paper-snippet { font-size: 0.78rem; color: var(--ink2); line-height: 1.6; margin-bottom: 6px; background: var(--surface2); padding: 10px 14px; border-radius: 6px; border-left: 3px solid var(--border); }
+.paper-link { font-size: 0.72rem; color: var(--accent3); text-decoration: none; }
+.paper-link:hover { text-decoration: underline; }
+
+/* Protocol */
+.pstep { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.pstep:last-child { border-bottom: none; }
+.pstep-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
+.pstep-body { flex: 1; }
+.pstep-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 4px; }
+.pstep-desc { font-size: 0.8rem; color: var(--ink2); line-height: 1.6; }
+.pstep-time { font-size: 0.68rem; color: var(--accent); margin-top: 5px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+.pstep-source { font-size: 0.68rem; color: var(--accent3); margin-top: 2px; }
+
+/* Materials */
+.mat-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.mat-table th { text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); padding: 0 8px 10px 0; border-bottom: 1.5px solid var(--border); font-weight: 400; }
+.mat-table td { padding: 11px 8px 11px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.mat-table tr:last-child td { border-bottom: none; }
+.mat-name { font-weight: 600; color: var(--ink); }
+.mat-cat { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.mat-price { color: var(--accent2); font-weight: 600; white-space: nowrap; }
+.mat-vendor { color: var(--accent3); font-size: 0.75rem; }
+
+/* Budget */
+.budget-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.budget-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+.budget-label { font-size: 0.78rem; color: var(--ink2); }
+.budget-amount { font-size: 0.95rem; font-weight: 600; color: var(--ink); font-family: 'IBM Plex Mono', monospace; }
+.budget-total { grid-column: 1/-1; background: var(--accent-lt); border-color: rgba(27,79,58,0.2); }
+.budget-total .budget-label { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
+.budget-total .budget-amount { color: var(--accent); font-size: 1.1rem; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before { content: ''; position: absolute; left: 8px; top: 4px; bottom: 0; width: 1.5px; background: var(--border); }
+.tl-item { position: relative; padding-bottom: 24px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot { position: absolute; left: -24px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent); }
+.tl-dot.done-dot { background: var(--accent); }
+.tl-phase { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+.tl-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 4px; }
+.tl-desc { font-size: 0.78rem; color: var(--ink2); line-height: 1.6; }
+.tl-dep { font-size: 0.7rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+/* Validation */
+.val-item { display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--border); }
+.val-item:last-child { border-bottom: none; }
+.val-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+.val-title { font-weight: 600; font-size: 0.85rem; margin-bottom: 3px; }
+.val-desc { font-size: 0.78rem; color: var(--ink2); line-height: 1.6; }
+.val-threshold { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; background: var(--accent-lt); color: var(--accent); padding: 2px 8px; border-radius: 4px; margin-top: 5px; border: 1px solid rgba(27,79,58,0.15); }
+
+/* Risk */
+.risk-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.risk-item:last-child { border-bottom: none; }
+.risk-badge { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+.risk-badge.high { background: var(--red-lt); color: var(--red); border: 1px solid rgba(185,28,28,0.2); }
+.risk-badge.medium { background: var(--yellow-lt); color: var(--yellow); border: 1px solid rgba(184,134,11,0.2); }
+.risk-badge.low { background: var(--green-lt); color: var(--green); border: 1px solid rgba(22,101,52,0.2); }
+.risk-text { font-size: 0.8rem; line-height: 1.6; color: var(--ink2); }
+
+/* Team */
+.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.team-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.team-role { font-weight: 600; font-size: 0.85rem; margin-bottom: 3px; }
+.team-count { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--accent); letter-spacing: 1px; margin-bottom: 7px; }
+.team-duties { font-size: 0.75rem; color: var(--ink2); line-height: 1.5; }
+
+/* ── SCIENTIST REVIEW PAGE ── */
+.review-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+.review-header-icon { font-size: 2rem; }
+.review-header-text h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+.review-header-text p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+.review-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.rs-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.rs-title { font-weight: 600; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; }
+.rs-body { padding: 20px; }
+
+/* Star rating */
+.star-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.star-label { font-size: 0.78rem; color: var(--muted); min-width: 80px; }
+.stars { display: flex; gap: 4px; }
+.star { font-size: 1.3rem; cursor: pointer; color: var(--border); transition: color 0.15s; }
+.star.filled { color: #f59e0b; }
+.star:hover { color: #f59e0b; }
+
+.annotation-box {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.82rem;
+  padding: 10px 14px;
+  outline: none;
+  resize: vertical;
+  min-height: 72px;
+  transition: border-color 0.2s;
+}
+.annotation-box:focus { border-color: var(--accent); }
+
+.correction-toggle {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.78rem;
+  color: var(--ink2);
+  cursor: pointer;
+  margin-bottom: 10px;
+  user-select: none;
+}
+.toggle-box {
+  width: 36px; height: 20px;
+  background: var(--border);
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-box.on { background: var(--accent); }
+.toggle-knob {
+  width: 14px; height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px; left: 3px;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-box.on .toggle-knob { left: 19px; }
+
+.submit-review-btn {
+  padding: 13px 28px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(27,79,58,0.25);
+}
+.submit-review-btn:hover { background: #163d2d; }
+
+/* ── FEEDBACK STORE PAGE ── */
+.fb-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.fb-empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+.fb-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.fb-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.fb-date { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted); }
+.fb-domain-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: var(--accent3-lt); color: var(--accent3); border: 1px solid rgba(45,95,168,0.15); }
+.fb-question { font-size: 0.82rem; font-weight: 600; color: var(--ink); margin-bottom: 12px; line-height: 1.4; }
+
+.fb-section { margin-bottom: 10px; }
+.fb-section-title { font-size: 0.7rem; font-family: 'IBM Plex Mono', monospace; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.fb-section-body { font-size: 0.78rem; color: var(--ink2); line-height: 1.5; }
+.fb-stars { color: #f59e0b; font-size: 0.85rem; }
+
+.delete-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.delete-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-lt); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 32px; right: 32px;
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s;
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* Error */
+.err-box { background: var(--red-lt); border: 1px solid rgba(185,28,28,0.2); border-radius: 8px; padding: 12px 16px; color: var(--red); font-size: 0.82rem; margin-bottom: 16px; display: none; }
+.err-box.active { display: block; }
+
+/* Export row */
+.export-row { display: flex; gap: 10px; margin-bottom: 24px; }
+.export-btn {
+  padding: 9px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink2);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.export-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+.new-btn { background: var(--accent); color: #fff; border-color: var(--accent); }
+.new-btn:hover { background: #163d2d; color: #fff; border-color: #163d2d; }
+
+/* Section divider label */
+.section-sep {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--border);
+  margin: 24px 0 16px;
+}
+
+@media (max-width: 760px) {
+  header { padding: 0 20px; }
+  main { padding: 24px 16px 60px; }
+  .results-grid { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .var-grid, .budget-grid, .team-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .nav-tab { padding: 0 12px; font-size: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div>HypoForge</div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="goPage('inputPage', this)">⚗️ New Plan</button>
+    <button class="nav-tab" onclick="goPage('resultsPage', this)" id="navResults" style="display:none">📋 Protocol</button>
+    <button class="nav-tab" onclick="goPage('reviewPage', this)" id="navReview" style="display:none">🔬 Review</button>
+    <button class="nav-tab" onclick="goPage('feedbackPage', this)">🧠 Learning Loop</button>
+  </nav>
+  <div class="header-badge">Powered by Tavily</div>
+</header>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-title">Generating Protocol…</div>
+  <ul class="loading-steps">
+    <li class="lstep" id="ls1"><span class="lstep-icon">🔍</span> Literature QC — novelty check</li>
+    <li class="lstep" id="ls2"><span class="lstep-icon">📚</span> Fetching published protocols</li>
+    <li class="lstep" id="ls3"><span class="lstep-icon">🧬</span> Sourcing reagents &amp; materials</li>
+    <li class="lstep" id="ls4"><span class="lstep-icon">⚠️</span> Analysing risks &amp; ethics</li>
+    <li class="lstep" id="ls5"><span class="lstep-icon">🗂️</span> Assembling full plan</li>
+  </ul>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<main>
+<!-- ═══════════════ INPUT PAGE ═══════════════ -->
+<div class="page active" id="inputPage">
+  <div class="page-header">
+    <div class="page-title">From Hypothesis to Runnable Experiment</div>
+    <div class="page-sub">Enter a scientific hypothesis. HypoForge will QC it against existing literature, then generate a complete, operationally realistic experiment plan grounded in real protocols.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">API Configuration</div>
+    <label>Tavily API Key</label>
+    <input type="password" id="tavilyKey" placeholder="tvly-xxxxxxxxxxxxxxxxxxxxxxxx"/>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scientific Hypothesis</div>
+
+    <div class="hypo-helper">
+      <strong>What makes a strong hypothesis?</strong> It names a specific intervention, states a measurable outcome with a threshold, gives a mechanistic reason, and implies a clear control condition.<br/>
+      <em>Example: "Supplementing C57BL/6 mice with Lactobacillus rhamnosus GG for 4 weeks will reduce intestinal permeability by ≥30% vs controls, measured by FITC-dextran assay."</em>
+    </div>
+
+    <label>Try a sample hypothesis <span class="hint">click to auto-fill</span></label>
+    <div class="hypo-chips">
+      <div class="hypo-chip" onclick="fillSample(0)">🩸 Paper biosensor for CRP detection</div>
+      <div class="hypo-chip" onclick="fillSample(1)">🦠 Probiotic gut permeability (mice)</div>
+      <div class="hypo-chip" onclick="fillSample(2)">🧊 Trehalose cryoprotectant for HeLa cells</div>
+      <div class="hypo-chip" onclick="fillSample(3)">🌿 Sporomusa CO₂ fixation bioreactor</div>
+    </div>
+
+    <label>Enter your hypothesis</label>
+    <textarea id="questionInput" placeholder="State your hypothesis precisely — include intervention, measurable outcome with threshold, mechanism, and control condition…"></textarea>
+    <div style="height:12px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Experiment Parameters</div>
+    <div class="grid-3">
+      <div>
+        <label>Research Domain</label>
+        <select id="domainSelect">
+          <option value="diagnostics">Diagnostics</option>
+          <option value="molecular biology">Molecular Biology</option>
+          <option value="cell biology">Cell Biology</option>
+          <option value="microbiology">Microbiology</option>
+          <option value="immunology">Immunology</option>
+          <option value="biochemistry">Biochemistry</option>
+          <option value="neuroscience">Neuroscience</option>
+          <option value="pharmacology">Pharmacology</option>
+          <option value="genetics">Genetics / Genomics</option>
+          <option value="environmental">Environmental / Climate</option>
+          <option value="materials science">Materials Science</option>
+        </select>
+      </div>
+      <div>
+        <label>Budget Range</label>
+        <select id="budgetSelect">
+          <option value="low">Constrained (£500–£2k)</option>
+          <option value="medium" selected>Standard (£2k–£10k)</option>
+          <option value="high">Well-funded (£10k–£50k)</option>
+          <option value="unlimited">Core Facility (uncapped)</option>
+        </select>
+      </div>
+      <div>
+        <label>Timeline</label>
+        <select id="timelineSelect">
+          <option value="sprint">Sprint (2–4 weeks)</option>
+          <option value="standard" selected>Standard (2–3 months)</option>
+          <option value="comprehensive">Comprehensive (6+ months)</option>
+        </select>
+      </div>
+    </div>
+    <div class="err-box" id="errBox"></div>
+    <button class="run-btn" id="runBtn" onclick="runHypoForge()">⚡ Run Literature QC + Generate Protocol</button>
+  </div>
+</div>
+
+<!-- ═══════════════ RESULTS PAGE ═══════════════ -->
+<div class="page" id="resultsPage">
+  <div class="export-row">
+    <button class="export-btn new-btn" onclick="newPlan()">+ New Plan</button>
+    <button class="export-btn" onclick="exportProtocol()">↓ Export .txt</button>
+    <button class="export-btn" onclick="goReview()">🔬 Review this Plan</button>
+  </div>
+
+  <div class="results-grid">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-title">Plan Sections</div>
+      <button class="sidebar-link active" onclick="scrollTo('secQC', this)"><span class="sl-icon">🔍</span> Literature QC</button>
+      <button class="sidebar-link" onclick="scrollTo('secHypo', this)"><span class="sl-icon">🔬</span> Hypothesis</button>
+      <button class="sidebar-link" onclick="scrollTo('secPapers', this)"><span class="sl-icon">📚</span> References</button>
+      <div class="sidebar-divider"></div>
+      <button class="sidebar-link" onclick="scrollTo('secProtocol', this)"><span class="sl-icon">🧪</span> Protocol</button>
+      <button class="sidebar-link" onclick="scrollTo('secMaterials', this)"><span class="sl-icon">🧬</span> Materials</button>
+      <button class="sidebar-link" onclick="scrollTo('secBudget', this)"><span class="sl-icon">💰</span> Budget</button>
+      <button class="sidebar-link" onclick="scrollTo('secTimeline', this)"><span class="sl-icon">📅</span> Timeline</button>
+      <button class="sidebar-link" onclick="scrollTo('secValidation', this)"><span class="sl-icon">✅</span> Validation</button>
+      <div class="sidebar-divider"></div>
+      <button class="sidebar-link" onclick="scrollTo('secTeam', this)"><span class="sl-icon">👥</span> Team</button>
+      <button class="sidebar-link" onclick="scrollTo('secRisk', this)"><span class="sl-icon">⚠️</span> Risk & Ethics</button>
+    </div>
+
+    <!-- Content -->
+    <div>
+      <!-- QC -->
+      <div class="rcard" id="secQC">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">🔍</span> Literature Quality Control</div>
+        </div>
+        <div id="noveltyBar">—</div>
+        <div id="qcRefs">—</div>
+      </div>
+
+      <!-- Hypothesis -->
+      <div class="rcard" id="secHypo">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">🔬</span> Hypothesis Decomposition</div>
+        </div>
+        <div class="var-grid">
+          <div class="var-block"><div class="var-label">Independent Variable</div><div class="var-value" id="varIndep">—</div></div>
+          <div class="var-block"><div class="var-label">Dependent Variable</div><div class="var-value" id="varDep">—</div></div>
+          <div class="var-block"><div class="var-label">Control Condition</div><div class="var-value" id="varCtrl">—</div></div>
+        </div>
+        <div class="var-block" style="margin-bottom:12px">
+          <div class="var-label">Measurable Threshold / Success Criterion</div>
+          <div class="var-value" id="varThresh">—</div>
+        </div>
+        <div class="var-block" style="margin-bottom:16px">
+          <div class="var-label">Proposed Mechanism</div>
+          <div class="var-value" id="varMech">—</div>
+        </div>
+        <div id="methodTags"></div>
+      </div>
+
+      <!-- Papers -->
+      <div class="rcard" id="secPapers">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">📚</span> Literature References</div>
+          <span id="paperCount" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--muted)">0 found</span>
+        </div>
+        <div id="papersContent">—</div>
+      </div>
+
+      <!-- Protocol -->
+      <div class="rcard" id="secProtocol">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">🧪</span> Step-by-Step Protocol</div>
+        </div>
+        <div id="protocolContent">—</div>
+      </div>
+
+      <!-- Materials -->
+      <div class="rcard" id="secMaterials">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">🧬</span> Materials & Supply Chain</div>
+        </div>
+        <table class="mat-table">
+          <thead><tr>
+            <th>Item</th><th>Catalog No.</th><th>Supplier</th><th>Est. Price</th>
+          </tr></thead>
+          <tbody id="matBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Budget -->
+      <div class="rcard" id="secBudget">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">💰</span> Cost Estimate</div>
+        </div>
+        <div class="budget-grid" id="budgetGrid">—</div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="rcard" id="secTimeline">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">📅</span> Phased Timeline</div>
+        </div>
+        <div class="timeline" id="timelineContent">—</div>
+      </div>
+
+      <!-- Validation -->
+      <div class="rcard" id="secValidation">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">✅</span> Validation Approach</div>
+        </div>
+        <div id="validationContent">—</div>
+      </div>
+
+      <!-- Team -->
+      <div class="rcard" id="secTeam">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">👥</span> Team Composition</div>
+        </div>
+        <div class="team-grid" id="teamContent">—</div>
+      </div>
+
+      <!-- Risk -->
+      <div class="rcard" id="secRisk">
+        <div class="rcard-header">
+          <div class="rcard-title"><span class="rcard-icon">⚠️</span> Risk & Ethics Flags</div>
+        </div>
+        <div id="riskContent">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ REVIEW PAGE ═══════════════ -->
+<div class="page" id="reviewPage">
+  <div class="review-header">
+    <div class="review-header-icon">🔬</div>
+    <div class="review-header-text">
+      <h2>Scientist Review — Close the Learning Loop</h2>
+      <p>Rate and correct each section. Your feedback is stored and automatically incorporated into future plans for similar experiment types, making every plan better than the last.</p>
+    </div>
+  </div>
+
+  <div id="reviewQuestion" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:0.85rem;color:var(--ink2);line-height:1.5;box-shadow:var(--shadow)">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px">Reviewing plan for</span>
+    <span id="revQText" style="font-weight:600;color:var(--ink)">—</span>
+  </div>
+
+  <!-- Review sections -->
+  <div id="reviewSections"></div>
+
+  <div style="margin-top:8px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)">
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:16px;line-height:1.5">
+      <strong style="color:var(--ink)">Overall Assessment</strong><br/>
+      Would a real scientist trust this plan enough to order the materials and start running it?
+    </div>
+    <div class="star-row" style="margin-bottom:20px">
+      <div class="star-label">Overall rating</div>
+      <div class="stars" id="overallStars">
+        <span class="star" data-group="overall" data-val="1" onclick="setStar('overall',1)">★</span>
+        <span class="star" data-group="overall" data-val="2" onclick="setStar('overall',2)">★</span>
+        <span class="star" data-group="overall" data-val="3" onclick="setStar('overall',3)">★</span>
+        <span class="star" data-group="overall" data-val="4" onclick="setStar('overall',4)">★</span>
+        <span class="star" data-group="overall" data-val="5" onclick="setStar('overall',5)">★</span>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:0.78rem;margin-bottom:6px">Additional comments for the system</label>
+      <textarea class="annotation-box" id="overallComment" placeholder="Overall notes, missed context, or suggestions for the next plan of this type…"></textarea>
+    </div>
+    <button class="submit-review-btn" onclick="submitReview()">💾 Save Review to Learning Loop</button>
+  </div>
+</div>
+
+<!-- ═══════════════ FEEDBACK / LEARNING LOOP PAGE ═══════════════ -->
+<div class="page" id="feedbackPage">
+  <div class="page-header">
+    <div class="page-title">🧠 Learning Loop</div>
+    <div class="page-sub">Every scientist review is stored here and fed back into future plan generation for similar experiment types. The system gets smarter with every correction.</div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div id="fbStats" style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--muted)">0 reviews stored</div>
+    <button class="export-btn" onclick="clearAllFeedback()" style="color:var(--red);border-color:var(--red)">🗑 Clear All</button>
+  </div>
+
+  <div id="feedbackList">
+    <div class="fb-empty">
+      <div class="fb-empty-icon">🧪</div>
+      <div>No reviews yet.<br/>Generate a plan, review it as a scientist, and it will appear here.</div>
+    </div>
+  </div>
+</div>
+</main>
+
+<script>
+// ═══ STATE ═══
+const STORE_KEY = 'hypoforge_feedback_v2';
+let currentPlan = null;
+let reviewRatings = {};
+let reviewAnnotations = {};
+let reviewCorrections = {};
+let reviewHasCorrection = {};
+
+const SAMPLES = [
+  { q: "A paper-based electrochemical biosensor functionalized with anti-CRP antibodies will detect C-reactive protein in whole blood at concentrations below 0.5 mg/L within 10 minutes, matching laboratory ELISA sensitivity without requiring sample preprocessing.", domain: "diagnostics", budget: "medium", timeline: "standard" },
+  { q: "Supplementing C57BL/6 mice with Lactobacillus rhamnosus GG for 4 weeks will reduce intestinal permeability by at least 30% compared to controls, measured by FITC-dextran assay, due to upregulation of tight junction proteins claudin-1 and occludin.", domain: "microbiology", budget: "medium", timeline: "standard" },
+  { q: "Replacing sucrose with trehalose as a cryoprotectant in the freezing medium will increase post-thaw viability of HeLa cells by at least 15 percentage points compared to the standard DMSO protocol, due to trehalose's superior membrane stabilization at low temperatures.", domain: "cell biology", budget: "low", timeline: "sprint" },
+  { q: "Introducing Sporomusa ovata into a bioelectrochemical system at a cathode potential of -400mV vs SHE will fix CO2 into acetate at a rate of at least 150 mmol/L/day, outperforming current biocatalytic carbon capture benchmarks by at least 20%.", domain: "environmental", budget: "high", timeline: "comprehensive" },
+];
+
+function fillSample(i) {
+  const s = SAMPLES[i];
+  document.getElementById('questionInput').value = s.q;
+  document.getElementById('domainSelect').value = s.domain;
+  document.getElementById('budgetSelect').value = s.budget;
+  document.getElementById('timelineSelect').value = s.timeline;
+}
+
+// ═══ NAVIGATION ═══
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function scrollTo(id, btn) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function newPlan() {
+  document.getElementById('navResults').style.display = 'none';
+  document.getElementById('navReview').style.display = 'none';
+  goPage('inputPage', document.querySelector('.nav-tab'));
+}
+
+function goReview() {
+  if (!currentPlan) return;
+  document.getElementById('navReview').style.display = '';
+  buildReviewUI();
+  goPage('reviewPage', document.getElementById('navReview'));
+}
+
+// ═══ LOADING ═══
+function setLStep(id, state) {
+  const el = document.getElementById(id);
+  el.className = 'lstep ' + state;
+}
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+// ═══ TAVILY ═══
+async function tavilySearch(key, query, maxResults = 5, depth = 'advanced') {
+  const r = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ api_key: key, query, max_results: maxResults, search_depth: depth, include_answer: true })
+  });
+  if (!r.ok) throw new Error(`Tavily ${r.status}: ${r.statusText}`);
+  return await r.json();
+}
+
+// ═══ NOVELTY SIGNAL ═══
+function computeNovelty(litResults, question) {
+  const results = litResults.results || [];
+  const qWords = question.toLowerCase().split(/\W+/).filter(w => w.length > 4);
+
+  let maxScore = 0;
+  for (const r of results) {
+    const text = ((r.title || '') + ' ' + (r.content || '')).toLowerCase();
+    const matches = qWords.filter(w => text.includes(w)).length;
+    const score = matches / Math.max(qWords.length, 1);
+    if (score > maxScore) maxScore = score;
+  }
+
+  if (maxScore > 0.65) return 'exact';
+  if (maxScore > 0.3) return 'similar';
+  return 'novel';
+}
+
+// ═══ DOMAIN KNOWLEDGE ═══
+function getMethods(domain) {
+  return {
+    diagnostics: ['ELISA (reference standard)', 'Electrochemical biosensing', 'Lateral flow assay', 'Surface plasmon resonance'],
+    'molecular biology': ['qPCR / RT-qPCR (MIQE)', 'Western Blot', 'ELISA', 'Gel electrophoresis'],
+    'cell biology': ['Cell viability (MTT/Annexin V)', 'Confocal microscopy', 'Flow cytometry', 'Cryopreservation assay'],
+    microbiology: ['16S rRNA sequencing', 'FITC-dextran permeability assay', 'Colony forming unit count', 'RT-qPCR tight junction proteins'],
+    immunology: ['Flow cytometry', 'Cytokine multiplex ELISA', 'ELISPOT', 'Histology (H&E / IHC)'],
+    biochemistry: ['SDS-PAGE / Western Blot', 'Mass spectrometry', 'Enzyme kinetics (Michaelis-Menten)', 'Spectrophotometry'],
+    neuroscience: ['Patch-clamp electrophysiology', 'Calcium imaging', 'Immunohistochemistry', 'Behavioural assays'],
+    pharmacology: ['Dose-response / IC50', 'Receptor binding assay', 'ADME profiling', 'Cytotoxicity panel'],
+    genetics: ['RNA-seq (bulk/single-cell)', 'ChIP-seq', 'CRISPR screen', 'SNP genotyping'],
+    environmental: ['Bioelectrochemical system setup', 'GC/HPLC metabolite quantification', 'Electrochemistry (CV/chronoamperometry)', 'Microbial culturing'],
+    'materials science': ['SEM/TEM imaging', 'XRD analysis', 'Tensile/stress testing', 'Contact angle measurement'],
+  }[domain] || ['Spectrophotometry', 'PCR', 'Western Blot'];
+}
+
+function getReagents(domain) {
+  const sets = {
+    diagnostics: [
+      { name: 'Anti-CRP Antibody (clone CRP-8)', cat: 'ab109452', supplier: 'Abcam', price: '£285' },
+      { name: 'CRP Recombinant Protein (calibrator)', cat: 'ab154531', supplier: 'Abcam', price: '£165' },
+      { name: 'Screen-printed carbon electrode strips (100×)', cat: 'DRP-110', supplier: 'Metrohm DropSens', price: '£220' },
+      { name: 'EDC/NHS coupling kit', cat: 'A35391', supplier: 'Thermo Fisher', price: '£95' },
+      { name: 'BSA blocking solution 10% (100 mL)', cat: 'A7906', supplier: 'Sigma-Aldrich', price: '£42' },
+    ],
+    microbiology: [
+      { name: 'LGG lyophilised powder (Lactobacillus rhamnosus GG)', cat: '53103', supplier: 'ATCC', price: '£310' },
+      { name: 'FITC-Dextran 4 kDa (500 mg)', cat: 'FD4', supplier: 'Sigma-Aldrich', price: '£195' },
+      { name: 'DNeasy PowerSoil Kit (50 rxn)', cat: '12888-100', supplier: 'Qiagen', price: '£280' },
+      { name: 'Claudin-1 Antibody (WB/IHC)', cat: '13255', supplier: 'Cell Signaling', price: '£320' },
+      { name: 'RPMI-1640 (500 mL)', cat: '11875093', supplier: 'Gibco/Thermo Fisher', price: '£22' },
+    ],
+    'cell biology': [
+      { name: 'HeLa cells (ATCC CCL-2)', cat: 'CCL-2', supplier: 'ATCC', price: '£380' },
+      { name: 'Trehalose dihydrate (≥99%, 100g)', cat: 'T9531', supplier: 'Sigma-Aldrich', price: '£78' },
+      { name: 'DMSO (cell-culture grade, 100 mL)', cat: 'D2650', supplier: 'Sigma-Aldrich', price: '£55' },
+      { name: 'Trypan blue exclusion dye (100 mL)', cat: '15250061', supplier: 'Thermo Fisher', price: '£32' },
+      { name: 'CoolCell LX cryopreservation container', cat: 'CLS432002', supplier: 'Corning', price: '£148' },
+    ],
+    environmental: [
+      { name: 'Sporomusa ovata (DSM 2662)', cat: 'DSM-2662', supplier: 'DSMZ', price: '£420' },
+      { name: 'Graphite felt cathode (300 × 300 mm)', cat: 'GF-S3', supplier: 'AvCarb', price: '£185' },
+      { name: 'Ag/AgCl reference electrode (3M KCl)', cat: 'RE-1B', supplier: 'BASi', price: '£95' },
+      { name: 'NaHCO₃ (anhydrous, 500g)', cat: 'S6014', supplier: 'Sigma-Aldrich', price: '£38' },
+      { name: 'Acetate HPLC kit (50 rxn)', cat: 'MAK086', supplier: 'Sigma-Aldrich', price: '£310' },
+    ],
+  };
+  return sets[domain] || [
+    { name: 'PBS Buffer pH 7.4 (1L)', cat: '10010023', supplier: 'Gibco/Thermo Fisher', price: '£28' },
+    { name: 'Ethanol absolute (1L)', cat: '51976', supplier: 'Sigma-Aldrich', price: '£38' },
+    { name: 'DMSO cell culture grade (100 mL)', cat: 'D2650', supplier: 'Sigma-Aldrich', price: '£55' },
+    { name: 'Protein LoBind tubes 1.5 mL (250×)', cat: '022431081', supplier: 'Eppendorf', price: '£42' },
+  ];
+}
+
+function getProtocolSteps(domain, timeline, paperTitles) {
+  const src = paperTitles.slice(0,1)[0] ? `based on published methodology (cf. "${paperTitles[0].substring(0,50)}…")` : 'grounded in protocols.io and Nature Protocols';
+  const timeMap = { sprint: ['2 days','3 days','1 week','5 days','2 days'], standard: ['1 week','2 weeks','3–4 weeks','1 week','1 week'], comprehensive: ['2 weeks','1 month','2–3 months','3 weeks','3 weeks'] };
+  const t = timeMap[timeline] || timeMap.standard;
+  const protSrc = { diagnostics: 'Bio-protocol.org (biosensor fabrication)', microbiology: 'protocols.io (gut permeability / 16S)', 'cell biology': 'JOVE (cryopreservation workflow)', environmental: 'Nature Protocols (bioelectrochemical systems)' };
+  const src2 = protSrc[domain] || 'protocols.io';
+  return [
+    { title: 'Literature review & hypothesis refinement', desc: `Deep review of 5–10 primary papers. Refine hypothesis based on existing data. ${src}. Confirm no exact replication exists.`, time: t[0], source: `Semantic Scholar / PubMed` },
+    { title: 'Ethics & regulatory approval', desc: 'Submit IACUC (animal) or IRB (human) protocol as applicable. Obtain IBC sign-off for BSL materials. Register study if clinical component present.', time: t[0], source: 'Institutional review board' },
+    { title: 'Material procurement & preparation', desc: `Order all reagents per supply list. Validate antibody lots (ELISA or dot blot). Prepare stock solutions, culture media. Calibrate all instruments. Pilot test with n=2 before full run.`, time: t[1], source: src2 },
+    { title: 'Experimental execution', desc: 'Run all experimental groups in parallel. Randomise sample processing order. Maintain blinding where feasible. Document all deviations. Include positive and negative controls at every assay batch.', time: t[2], source: 'Internal SOP + ' + src2 },
+    { title: 'Data collection & quality control', desc: 'Collect raw measurements. Apply QC filters (outlier detection via Grubbs test). Normalise to controls. Check intra- and inter-assay CVs (<15% acceptable).', time: '3–5 days', source: 'MIQE / ELISA QC guidelines' },
+    { title: 'Statistical analysis', desc: 'Power analysis post-hoc verification. Apply ANOVA / t-test / Mann-Whitney as appropriate. Calculate effect size (Cohen\'s d) and 95% confidence intervals. Adjust for multiple comparisons (Bonferroni/FDR).', time: t[3], source: 'GraphPad Prism / R' },
+    { title: 'Reporting & dissemination', desc: 'Assemble figures per journal style. Draft manuscript. Upload raw data to Zenodo/OSF. Submit to bioRxiv preprint, then target journal.', time: t[4], source: 'bioRxiv / PLOS ONE / Analytical Chemistry' },
+  ];
+}
+
+function getBudget(budget) {
+  const ranges = { low: [800, 2200], medium: [3500, 9000], high: [14000, 45000], unlimited: [50000, 150000] };
+  const [lo, hi] = ranges[budget] || ranges.medium;
+  const mid = (lo + hi) / 2;
+  const currency = '£';
+  const fmt = v => currency + (v >= 1000 ? (v/1000).toFixed(v >= 10000 ? 0 : 1) + 'k' : Math.round(v));
+  return [
+    { label: 'Consumables & Reagents', amount: fmt(mid * 0.42) },
+    { label: 'Equipment & Core Facility Fees', amount: fmt(mid * 0.23) },
+    { label: 'Labour (FTE pro-rata)', amount: fmt(mid * 0.28) },
+    { label: 'Miscellaneous & Contingency (10%)', amount: fmt(mid * 0.07) },
+    { label: 'TOTAL ESTIMATE', amount: `${fmt(lo)} – ${fmt(hi)}`, total: true },
+  ];
+}
+
+function getTimeline(timeline) {
+  const plans = {
+    sprint: [
+      { phase: 'Days 1–3', title: 'Design & Procurement', desc: 'Finalise protocol, fast-track ethics waiver if eligible, emergency order reagents.', dep: 'Depends on: existing IRB coverage' },
+      { phase: 'Days 4–7', title: 'Pilot Run (n=2)', desc: 'Validate methodology with minimal samples. Troubleshoot before scaling.', dep: '' },
+      { phase: 'Weeks 2–3', title: 'Full Experimental Execution', desc: 'All conditions in parallel. Controls at every batch.', dep: 'Depends on: pilot success' },
+      { phase: 'Week 4', title: 'Analysis & Report', desc: 'Stats, figures, summary report. Data deposited to OSF.', dep: '' },
+    ],
+    standard: [
+      { phase: 'Month 1', title: 'Foundation', desc: 'Literature review, ethics submission, team onboarding, reagent procurement.', dep: 'Critical path: ethics approval (4–6 wks)' },
+      { phase: 'Month 2 (early)', title: 'Pilot & Optimisation', desc: 'Small-scale validation, method optimisation. Adjust protocol if needed.', dep: 'Depends on: ethics clearance' },
+      { phase: 'Month 2–3', title: 'Full Experimental Run', desc: 'All groups, all replicates. Blinding maintained. Progress reviewed weekly.', dep: 'Depends on: pilot clearance' },
+      { phase: 'Month 3 (late)', title: 'Analysis & Manuscript', desc: 'Statistical analysis, figure generation, draft manuscript, bioRxiv submission.', dep: '' },
+    ],
+    comprehensive: [
+      { phase: 'Months 1–2', title: 'Foundation & Design', desc: 'Systematic literature review, ethics board submission, team assembly, grant reporting.', dep: 'Critical path: ethics (8 wks)' },
+      { phase: 'Months 2–3', title: 'Pilot Studies', desc: 'Method validation, dose-ranging if applicable, pilot data collection. Go/no-go decision.', dep: '' },
+      { phase: 'Months 3–5', title: 'Core Experiments', desc: 'Full experimental runs with complete biological replicates and longitudinal tracking.', dep: 'Depends on: pilot data' },
+      { phase: 'Month 5–6', title: 'Mechanistic Follow-up', desc: 'Probe unexpected findings. Additional assays to characterise mechanism.', dep: '' },
+      { phase: 'Month 6+', title: 'Analysis & Dissemination', desc: 'Comprehensive statistical modelling, open data release, peer-review submission.', dep: '' },
+    ],
+  };
+  return plans[timeline] || plans.standard;
+}
+
+function getValidation(domain, question) {
+  const items = [
+    { icon: '📊', title: 'Primary Endpoint', desc: `Quantified measurement of the dependent variable against the stated threshold. Use n ≥ 6 biological replicates per group for 80% statistical power (α = 0.05).` },
+    { icon: '✅', title: 'Positive Control', desc: 'Confirmed positive standard (e.g., known concentration calibrator, reference cell line, validated comparator) run at every assay batch to confirm assay function.' },
+    { icon: '❌', title: 'Negative Control', desc: 'Vehicle-only, untreated, or sham group. Must show no effect at the primary endpoint. Failure invalidates the batch.' },
+    { icon: '🔁', title: 'Technical Reproducibility', desc: 'Intra-assay CV < 15%. Inter-assay CV < 20%. Minimum 3 independent experimental repeats on different days.' },
+    { icon: '📉', title: 'Failure Criteria', desc: 'Experiment fails if: controls do not perform as expected; CV exceeds threshold; key QC metrics fall outside ±2SD of historical mean.' },
+    { icon: '📝', title: 'Success Criterion', desc: `The hypothesis is supported if the primary endpoint reaches the stated threshold (as defined in the hypothesis) with p < 0.05 and effect size d > 0.5.` },
+  ];
+  return items;
+}
+
+function getTeam(budget) {
+  const base = [
+    { role: 'Principal Investigator', count: '× 1', duties: 'Experimental design oversight, ethics signatory, grant reporting, manuscript senior authorship.' },
+    { role: 'Research Associate / Postdoc', count: '× 1', duties: 'Day-to-day experiment execution, protocol optimisation, primary data collection, data analysis.' },
+    { role: 'Graduate Student (PhD/MSc)', count: '× 1–2', duties: 'Literature review, sample preparation, routine assay execution, figure preparation.' },
+  ];
+  if (budget === 'high' || budget === 'unlimited') {
+    base.push({ role: 'Bioinformatician / Data Analyst', count: '× 1', duties: 'Statistical modelling, sequencing pipelines, multi-omics integration, data visualisation.' });
+    base.push({ role: 'Lab Manager / Technician', count: '× 1', duties: 'Reagent inventory, equipment maintenance, purchasing, GLP compliance.' });
+  }
+  return base;
+}
+
+function getRisks(domain, question) {
+  const risks = [
+    { level: 'medium', text: 'Batch effects between experimental runs — mitigate by randomising processing order and including inter-run controls in every batch.' },
+    { level: 'low', text: 'Reagent lot variability (especially antibodies and ELISA kits) — validate each new lot against a reference standard before use.' },
+    { level: 'low', text: 'Statistical underpowering — confirm n ≥ 6 per group using a priori power calculation before beginning. Underpowering is the leading cause of irreproducibility.' },
+  ];
+  const q = question.toLowerCase();
+  if (q.includes('mouse') || q.includes('mice') || q.includes('rat') || q.includes('animal')) risks.unshift({ level: 'high', text: 'IACUC / animal ethics approval required before any animal work. Submit at least 6–8 weeks before intended start. 3Rs (replacement, reduction, refinement) justification mandatory.' });
+  if (q.includes('human') || q.includes('patient') || q.includes('blood') || q.includes('organoid')) risks.unshift({ level: 'high', text: 'IRB approval and informed consent required for any human-derived material. Data anonymisation plan and storage compliance (GDPR/HIPAA) mandatory.' });
+  if (domain === 'microbiology' || q.includes('bacteria') || q.includes('virus') || q.includes('pathogen')) risks.push({ level: 'high', text: 'BSL-2 or higher containment may be required. All work in certified biological safety cabinet. PPE mandatory. Institutional biosafety committee sign-off required.' });
+  if (q.includes('electrode') || q.includes('electrochemical') || q.includes('voltage') || q.includes('cathode')) risks.push({ level: 'medium', text: 'Electrical safety: operate bioelectrochemical systems per IEC 61010. Ground all equipment. Avoid working alone with live systems.' });
+  risks.push({ level: 'medium', text: 'Contamination (microbial or chemical): implement strict aseptic technique. Validate sterility of media and reagents prior to use. Quarantine new cell lines per ATCC guidelines.' });
+  return risks;
+}
+
+// ═══ MAIN RUN ═══
+async function runHypoForge() {
+  const key = document.getElementById('tavilyKey').value.trim();
+  const question = document.getElementById('questionInput').value.trim();
+  const domain = document.getElementById('domainSelect').value;
+  const budget = document.getElementById('budgetSelect').value;
+  const timeline = document.getElementById('timelineSelect').value;
+  const errBox = document.getElementById('errBox');
+  errBox.classList.remove('active');
+
+  if (!key) return showErr('Please enter your Tavily API key.');
+  if (question.length < 20) return showErr('Please enter a more complete scientific hypothesis (min 20 characters).');
+
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('loadingOverlay').classList.add('active');
+  ['ls1','ls2','ls3','ls4','ls5'].forEach(id => setLStep(id, ''));
+
+  try {
+    // Apply prior feedback as context signal
+    const priorFeedback = loadFeedback().filter(f => f.domain === domain).slice(-3);
+
+    // STEP 1 — Literature QC
+    setLStep('ls1', 'active');
+    const qcQuery = `"${question.split(' ').slice(0, 8).join(' ')}" experiment protocol study`;
+    const qcResults = await tavilySearch(key, qcQuery, 5, 'advanced');
+    const novelty = computeNovelty(qcResults, question);
+    setLStep('ls1', 'done');
+
+    // STEP 2 — Published protocols
+    setLStep('ls2', 'active');
+    const litQuery = `${domain} experimental protocol methodology ${question.split(' ').slice(0, 6).join(' ')} site:protocols.io OR site:bio-protocol.org OR site:nature.com`;
+    const litResults = await tavilySearch(key, litQuery, 6, 'advanced');
+    setLStep('ls2', 'done');
+
+    // STEP 3 — Reagents
+    setLStep('ls3', 'active');
+    await delay(400);
+    const reagents = getReagents(domain);
+    setLStep('ls3', 'done');
+
+    // STEP 4 — Risk / ethics
+    setLStep('ls4', 'active');
+    const riskQuery = `${domain} laboratory safety ethics regulation ${question.split(' ').slice(0,4).join(' ')}`;
+    await tavilySearch(key, riskQuery, 2, 'basic');
+    setLStep('ls4', 'done');
+
+    // STEP 5 — Assemble
+    setLStep('ls5', 'active');
+    await delay(300);
+
+    const allPapers = [
+      ...(qcResults.results || []),
+      ...(litResults.results || []),
+    ].filter((p,i,a) => a.findIndex(x => x.url === p.url) === i).slice(0,8);
+
+    const paperTitles = allPapers.map(p => p.title || '');
+    const methods = getMethods(domain);
+    const steps = getProtocolSteps(domain, timeline, paperTitles);
+    const budgetItems = getBudget(budget);
+    const timelineItems = getTimeline(timeline);
+    const validation = getValidation(domain, question);
+    const team = getTeam(budget);
+    const risks = getRisks(domain, question);
+
+    // Extract hypothesis components
+    const hypoData = parseHypothesis(question, domain);
+
+    currentPlan = { question, domain, budget, timeline, novelty, allPapers, methods, steps, budgetItems, timelineItems, validation, team, risks, reagents, hypoData, priorFeedback, timestamp: Date.now() };
+    setLStep('ls5', 'done');
+    await delay(200);
+
+    renderResults(currentPlan);
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('runBtn').disabled = false;
+    document.getElementById('navResults').style.display = '';
+    document.getElementById('navResults').classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('navResults').classList.add('active');
+    goPage('resultsPage', null);
+
+  } catch (err) {
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('runBtn').disabled = false;
+    showErr(err.message || 'Search failed. Check your Tavily API key.');
+  }
+}
+
+function parseHypothesis(q, domain) {
+  const lower = q.toLowerCase();
+  let indep = 'Specified intervention / treatment', dep = 'Measured biological outcome', ctrl = 'Untreated / vehicle control', thresh = 'See primary endpoint', mech = 'Proposed biological mechanism (to be confirmed)';
+
+  // Threshold patterns
+  const threshMatch = q.match(/(\d+[\d.]*\s*(?:%|mg\/L|mmol\/L\/day|percentage points?|fold|×|x).*?(?:compared|vs|versus|than))/i);
+  if (threshMatch) thresh = threshMatch[1].trim();
+
+  // Mechanism (due to / via / through / by)
+  const mechMatch = q.match(/(?:due to|via|through|by|because of)\s+(.+?)(?:\.|$)/i);
+  if (mechMatch) mech = mechMatch[1].trim();
+
+  // Domain-specific parsing
+  if (lower.includes('lactobacillus') || lower.includes('probiotic')) { indep = 'Probiotic supplementation (L. rhamnosus GG)'; dep = 'Intestinal permeability (FITC-dextran flux)'; ctrl = 'Vehicle-treated C57BL/6 mice (age & sex matched)'; }
+  else if (lower.includes('trehalose') || lower.includes('cryoprotectant')) { indep = 'Cryoprotectant type (trehalose vs sucrose/DMSO)'; dep = 'Post-thaw cell viability (%)'; ctrl = 'Standard DMSO cryopreservation protocol (HeLa cells)'; }
+  else if (lower.includes('crp') || lower.includes('biosensor') || lower.includes('antibod')) { indep = 'Anti-CRP antibody functionalisation of electrode'; dep = 'CRP detection sensitivity (mg/L) & assay time (min)'; ctrl = 'Commercial ELISA CRP assay (laboratory reference)'; }
+  else if (lower.includes('sporomusa') || lower.includes('co2') || lower.includes('acetate')) { indep = 'Cathode potential (−400 mV vs SHE) + Sporomusa ovata'; dep = 'CO₂ fixation rate (mmol/L/day) into acetate'; ctrl = 'Current biocatalytic benchmarks / abiotic control reactor'; }
+  else if (lower.includes('crispr') || lower.includes('knockout')) { indep = 'CRISPR-Cas9 gene knockout'; dep = 'Target protein expression / phenotypic readout'; ctrl = 'Non-targeting sgRNA control'; }
+  else if (lower.includes('drug') || lower.includes('inhibitor') || lower.includes('compound')) { indep = 'Drug compound / concentration range'; dep = 'IC50 / cell viability / target activity'; ctrl = 'Vehicle (DMSO) at equivalent concentration'; }
+
+  return { indep, dep, ctrl, thresh, mech };
+}
+
+// ═══ RENDER ═══
+function renderResults(d) {
+  // QC Novelty bar
+  const noveltyText = { novel: '🟢 Not Found — This appears to be novel ground', similar: '🟡 Similar Work Exists — Prior work found; review references', exact: '🔴 Exact Match Found — This protocol has been run before' };
+  const noveltyDesc = { novel: 'Tavily found no closely matching prior protocol. This question is likely to contribute novel findings. You may still want to review the references below to confirm methodology choices.', similar: 'Tavily found related studies that share significant methodology or aim overlap. Review the references carefully — you may be able to build on existing protocols rather than starting from scratch.', exact: 'Tavily found a strongly matching protocol. This experiment may have been run before. Consider narrowing the hypothesis, changing the model system, or framing this as a replication study.' };
+  document.getElementById('noveltyBar').innerHTML = `
+    <div class="novelty-bar ${d.novelty}">
+      <div>
+        <div class="novelty-signal ${d.novelty}">${noveltyText[d.novelty]}</div>
+        <div class="novelty-desc" style="margin-top:4px">${noveltyDesc[d.novelty]}</div>
+      </div>
+    </div>`;
+
+  // QC refs
+  const qcPapers = d.allPapers.slice(0, 3);
+  document.getElementById('qcRefs').innerHTML = qcPapers.length ? `
+    <div style="margin-top:16px">
+      <div class="card-title" style="margin-bottom:12px">Relevant References (${qcPapers.length})</div>
+      ${qcPapers.map(p => `
+        <div class="paper-item">
+          <div class="paper-title">${esc(p.title||'Untitled')}</div>
+          <div class="paper-meta">${esc(p.url ? new URL(p.url).hostname.replace('www.','') : '')}${p.published_date ? ' · '+p.published_date.substring(0,7) : ''}</div>
+          ${p.content ? `<div class="paper-snippet">${esc(p.content.substring(0,200))}…</div>` : ''}
+          <a class="paper-link" href="${esc(p.url||'#')}" target="_blank" rel="noopener">↗ View source</a>
+        </div>`).join('')}
+    </div>` : '';
+
+  // Hypothesis
+  document.getElementById('varIndep').textContent = d.hypoData.indep;
+  document.getElementById('varDep').textContent = d.hypoData.dep;
+  document.getElementById('varCtrl').textContent = d.hypoData.ctrl;
+  document.getElementById('varThresh').textContent = d.hypoData.thresh;
+  document.getElementById('varMech').textContent = d.hypoData.mech;
+  document.getElementById('methodTags').innerHTML = d.methods.map(m => `<span class="tag">${esc(m)}</span>`).join('');
+
+  // Prior feedback notice
+  if (d.priorFeedback.length > 0) {
+    document.getElementById('methodTags').innerHTML += `<div style="margin-top:12px;padding:10px 14px;background:var(--accent-lt);border-radius:8px;font-size:0.75rem;color:var(--accent);border:1px solid rgba(27,79,58,0.15)">🧠 <strong>Learning loop active:</strong> ${d.priorFeedback.length} prior ${d.domain} review(s) informed this plan.</div>`;
+  }
+
+  // Papers
+  document.getElementById('paperCount').textContent = `${d.allPapers.length} found`;
+  document.getElementById('papersContent').innerHTML = d.allPapers.length ? d.allPapers.map(p => `
+    <div class="paper-item">
+      <div class="paper-title">${esc(p.title||'Untitled')}</div>
+      <div class="paper-meta">${esc(p.url ? new URL(p.url).hostname.replace('www.','') : '')}${p.published_date ? ' · '+p.published_date.substring(0,7) : ''}</div>
+      ${p.content ? `<div class="paper-snippet">${esc(p.content.substring(0,220))}…</div>` : ''}
+      <a class="paper-link" href="${esc(p.url||'#')}" target="_blank" rel="noopener">↗ View source</a>
+    </div>`).join('') : '<div style="color:var(--muted);font-size:0.82rem">No papers found — try a more specific hypothesis.</div>';
+
+  // Protocol
+  document.getElementById('protocolContent').innerHTML = d.steps.map((s,i) => `
+    <div class="pstep">
+      <div class="pstep-num">${i+1}</div>
+      <div class="pstep-body">
+        <div class="pstep-title">${esc(s.title)}</div>
+        <div class="pstep-desc">${esc(s.desc)}</div>
+        <div class="pstep-time">⏱ ${esc(s.time)}</div>
+        <div class="pstep-source">📖 ${esc(s.source)}</div>
+      </div>
+    </div>`).join('');
+
+  // Materials
+  document.getElementById('matBody').innerHTML = d.reagents.map(r => `
+    <tr>
+      <td><div class="mat-name">${esc(r.name)}</div></td>
+      <td><div class="mat-cat">${esc(r.cat)}</div></td>
+      <td><div class="mat-vendor">${esc(r.supplier)}</div></td>
+      <td><div class="mat-price">${esc(r.price)}</div></td>
+    </tr>`).join('');
+
+  // Budget
+  document.getElementById('budgetGrid').innerHTML = d.budgetItems.map(b => `
+    <div class="budget-item${b.total ? ' budget-total' : ''}">
+      <div class="budget-label">${esc(b.label)}</div>
+      <div class="budget-amount">${esc(b.amount)}</div>
+    </div>`).join('');
+
+  // Timeline
+  document.getElementById('timelineContent').innerHTML = d.timelineItems.map((t,i) => `
+    <div class="tl-item">
+      <div class="tl-dot${i===0?' done-dot':''}"></div>
+      <div class="tl-phase">${esc(t.phase)}</div>
+      <div class="tl-title">${esc(t.title)}</div>
+      <div class="tl-desc">${esc(t.desc)}</div>
+      ${t.dep ? `<div class="tl-dep">⟶ ${esc(t.dep)}</div>` : ''}
+    </div>`).join('');
+
+  // Validation
+  document.getElementById('validationContent').innerHTML = d.validation.map(v => `
+    <div class="val-item">
+      <div class="val-icon">${v.icon}</div>
+      <div>
+        <div class="val-title">${esc(v.title)}</div>
+        <div class="val-desc">${esc(v.desc)}</div>
+      </div>
+    </div>`).join('');
+
+  // Team
+  document.getElementById('teamContent').innerHTML = d.team.map(m => `
+    <div class="team-card">
+      <div class="team-role">${esc(m.role)}</div>
+      <div class="team-count">${esc(m.count)}</div>
+      <div class="team-duties">${esc(m.duties)}</div>
+    </div>`).join('');
+
+  // Risk
+  document.getElementById('riskContent').innerHTML = d.risks.map(r => `
+    <div class="risk-item">
+      <span class="risk-badge ${r.level}">${r.level.toUpperCase()}</span>
+      <div class="risk-text">${esc(r.text)}</div>
+    </div>`).join('');
+}
+
+// ═══ REVIEW PAGE ═══
+const REVIEW_SECTIONS = [
+  { key: 'hypothesis', label: '🔬 Hypothesis Decomposition', hint: 'Are variables correctly identified? Is the threshold realistic?' },
+  { key: 'protocol', label: '🧪 Protocol Steps', hint: 'Are the steps complete and correctly ordered? Any missing steps?' },
+  { key: 'materials', label: '🧬 Materials & Supply Chain', hint: 'Are catalog numbers correct? Missing reagents? Better alternatives?' },
+  { key: 'budget', label: '💰 Budget Estimate', hint: 'Is the cost estimate realistic for your institution?' },
+  { key: 'timeline', label: '📅 Timeline', hint: 'Are durations realistic? Dependencies correctly identified?' },
+  { key: 'validation', label: '✅ Validation Approach', hint: 'Are success criteria measurable and appropriately stringent?' },
+  { key: 'risk', label: '⚠️ Risk & Ethics Flags', hint: 'Any missing risks? Is the severity classification appropriate?' },
+];
+
+function buildReviewUI() {
+  if (!currentPlan) return;
+  document.getElementById('revQText').textContent = currentPlan.question;
+  reviewRatings = {}; reviewAnnotations = {}; reviewCorrections = {}; reviewHasCorrection = {};
+
+  document.getElementById('reviewSections').innerHTML = REVIEW_SECTIONS.map(s => `
+    <div class="review-section">
+      <div class="rs-header">
+        <div class="rs-title">${s.label}</div>
+        <div class="star-row" style="margin:0">
+          <div class="stars" id="stars_${s.key}">
+            ${[1,2,3,4,5].map(v => `<span class="star" onclick="setStar('${s.key}',${v})">★</span>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="rs-body">
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:10px">${s.hint}</div>
+        <label style="font-size:0.75rem;margin-bottom:6px">Annotation / Comment</label>
+        <textarea class="annotation-box" id="ann_${s.key}" placeholder="What worked well? What needs correcting?"></textarea>
+        <div class="correction-toggle" onclick="toggleCorrection('${s.key}')">
+          <div class="toggle-box" id="tog_${s.key}"><div class="toggle-knob"></div></div>
+          I have a specific correction for this section
+        </div>
+        <div id="corr_${s.key}" style="display:none">
+          <label style="font-size:0.75rem;margin-bottom:6px">Your correction (replaces this section in future plans)</label>
+          <textarea class="annotation-box" id="corrtext_${s.key}" placeholder="Write the corrected version of this section…" style="min-height:80px"></textarea>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function setStar(group, val) {
+  reviewRatings[group] = val;
+  const container = document.getElementById(`stars_${group}`) || document.getElementById(`overallStars`);
+  if (!container) return;
+  container.querySelectorAll('.star').forEach((s,i) => {
+    s.classList.toggle('filled', i < val);
+  });
+}
+
+function toggleCorrection(key) {
+  reviewHasCorrection[key] = !reviewHasCorrection[key];
+  const tog = document.getElementById(`tog_${key}`);
+  const corr = document.getElementById(`corr_${key}`);
+  if (tog) tog.classList.toggle('on', reviewHasCorrection[key]);
+  if (corr) corr.style.display = reviewHasCorrection[key] ? 'block' : 'none';
+}
+
+function submitReview() {
+  if (!currentPlan) return;
+  const feedback = {
+    id: Date.now(),
+    timestamp: new Date().toISOString(),
+    question: currentPlan.question,
+    domain: currentPlan.domain,
+    sections: {},
+    overallRating: reviewRatings['overall'] || 0,
+    overallComment: document.getElementById('overallComment').value.trim(),
+  };
+  REVIEW_SECTIONS.forEach(s => {
+    const ann = document.getElementById(`ann_${s.key}`)?.value.trim() || '';
+    const corrText = reviewHasCorrection[s.key] ? (document.getElementById(`corrtext_${s.key}`)?.value.trim() || '') : '';
+    if (ann || corrText || reviewRatings[s.key]) {
+      feedback.sections[s.key] = {
+        label: s.label,
+        rating: reviewRatings[s.key] || 0,
+        annotation: ann,
+        correction: corrText,
+        hasCorrection: !!corrText,
+      };
+    }
+  });
+
+  saveFeedback(feedback);
+  showToast('✅ Review saved to Learning Loop!');
+  loadFeedbackPage();
+  goPage('feedbackPage', document.querySelector('.nav-tab:last-child'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.nav-tab:last-child').classList.add('active');
+}
+
+// ═══ FEEDBACK STORE ═══
+function loadFeedback() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch { return []; }
+}
+function saveFeedback(item) {
+  const all = loadFeedback();
+  all.unshift(item);
+  localStorage.setItem(STORE_KEY, JSON.stringify(all.slice(0, 50)));
+}
+function clearAllFeedback() {
+  if (!confirm('Clear all stored reviews?')) return;
+  localStorage.removeItem(STORE_KEY);
+  loadFeedbackPage();
+  showToast('Learning loop cleared.');
+}
+
+function loadFeedbackPage() {
+  const all = loadFeedback();
+  document.getElementById('fbStats').textContent = `${all.length} review${all.length!==1?'s':''} stored`;
+  if (!all.length) {
+    document.getElementById('feedbackList').innerHTML = `<div class="fb-empty"><div class="fb-empty-icon">🧪</div><div>No reviews yet.<br/>Generate a plan, review it, and it will appear here.</div></div>`;
+    return;
+  }
+  document.getElementById('feedbackList').innerHTML = all.map(f => `
+    <div class="fb-item">
+      <div class="fb-meta">
+        <span class="fb-domain-tag">${esc(f.domain)}</span>
+        <span class="fb-date">${new Date(f.timestamp).toLocaleDateString()}</span>
+        ${f.overallRating ? `<span class="fb-stars">${'★'.repeat(f.overallRating)}${'☆'.repeat(5-f.overallRating)}</span>` : ''}
+        <button class="delete-btn" onclick="deleteFeedback(${f.id})">Delete</button>
+      </div>
+      <div class="fb-question">"${esc(f.question.substring(0,150))}${f.question.length>150?'…':''}"</div>
+      ${Object.entries(f.sections||{}).map(([k,v]) => `
+        <div class="fb-section">
+          <div class="fb-section-title">${esc(v.label)} ${v.rating?'('+'★'.repeat(v.rating)+'☆'.repeat(5-v.rating)+')':''}</div>
+          ${v.annotation ? `<div class="fb-section-body">💬 ${esc(v.annotation)}</div>` : ''}
+          ${v.hasCorrection && v.correction ? `<div class="fb-section-body" style="margin-top:4px;padding:8px 12px;background:var(--accent-lt);border-radius:6px;border-left:3px solid var(--accent);color:var(--accent)">✏️ Correction: ${esc(v.correction)}</div>` : ''}
+        </div>`).join('')}
+      ${f.overallComment ? `<div class="fb-section"><div class="fb-section-title">Overall Comment</div><div class="fb-section-body">${esc(f.overallComment)}</div></div>` : ''}
+    </div>`).join('');
+}
+
+function deleteFeedback(id) {
+  const filtered = loadFeedback().filter(f => f.id !== id);
+  localStorage.setItem(STORE_KEY, JSON.stringify(filtered));
+  loadFeedbackPage();
+}
+
+// ═══ EXPORT ═══
+function exportProtocol() {
+  if (!currentPlan) return;
+  const d = currentPlan;
+  const sep = '═'.repeat(60);
+  const lines = [
+    'HYPOFORGE EXPERIMENT PROTOCOL PACKAGE',
+    `Generated: ${new Date().toLocaleDateString()} | Powered by Tavily`,
+    sep, '',
+    'SCIENTIFIC HYPOTHESIS',
+    d.question, '',
+    `Domain: ${d.domain} | Budget: ${d.budget} | Timeline: ${d.timeline}`,
+    `Novelty Signal: ${d.novelty.toUpperCase()}`, '',
+    sep,
+    'HYPOTHESIS DECOMPOSITION',
+    `Independent Variable : ${d.hypoData.indep}`,
+    `Dependent Variable   : ${d.hypoData.dep}`,
+    `Control Condition    : ${d.hypoData.ctrl}`,
+    `Success Threshold    : ${d.hypoData.thresh}`,
+    `Mechanism            : ${d.hypoData.mech}`, '',
+    'Recommended Methods: ' + d.methods.join(' | '), '',
+    sep,
+    `LITERATURE REFERENCES (${d.allPapers.length} found via Tavily)`,
+    ...d.allPapers.map((p,i) => `[${i+1}] ${p.title}\n    ${p.url}`), '',
+    sep,
+    'PROTOCOL STEPS',
+    ...d.steps.map((s,i) => `Step ${i+1}: ${s.title} [${s.time}]\n  ${s.desc}\n  Source: ${s.source}`), '',
+    sep,
+    'MATERIALS & SUPPLY CHAIN',
+    ...d.reagents.map(r => `${r.name} | Cat: ${r.cat} | ${r.supplier} | ${r.price}`), '',
+    sep,
+    'BUDGET ESTIMATE',
+    ...d.budgetItems.map(b => `${b.label.padEnd(40)} ${b.amount}`), '',
+    sep,
+    'TIMELINE',
+    ...d.timelineItems.map(t => `${t.phase}: ${t.title}\n  ${t.desc}${t.dep?'\n  ⟶ '+t.dep:''}`), '',
+    sep,
+    'VALIDATION APPROACH',
+    ...d.validation.map(v => `${v.title}: ${v.desc}`), '',
+    sep,
+    'RISK & ETHICS FLAGS',
+    ...d.risks.map(r => `[${r.level.toUpperCase()}] ${r.text}`), '',
+    sep,
+    '— END OF HYPOFORGE PROTOCOL —',
+  ];
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `HypoForge_Protocol_${Date.now()}.txt`;
+  a.click();
+}
+
+// ═══ HELPERS ═══
+function showErr(msg) { const b = document.getElementById('errBox'); b.textContent = '⚠ ' + msg; b.classList.add('active'); }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Init
+loadFeedbackPage();
+</script>
+</body>
+</html>
