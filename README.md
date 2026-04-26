@@ -680,6 +680,7 @@ HackNation/
 │
 └── reference/
     └── tavily-hacker-guide.pdf  # Tavily API reference (search, extract, crawl, map, research)
+
 <img width="859" height="907" alt="image" src="https://github.com/user-attachments/assets/e8bf885b-1935-400f-8009-bf3b97da4488" />
 
 ```
